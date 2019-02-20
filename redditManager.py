@@ -15,8 +15,6 @@ import numpy as np
 # import nltk
 
 from multiprocessing.pool import Pool
-import logging
-
 from timesearch import timesearch
 
 import re
@@ -38,20 +36,20 @@ class redditManager():
         
     def perform_download(self, subreddit, retries=10):
         try:
-            logging.info("\nDownloading submissions from /r/{}".format(subreddit))
+            print("\nDownloading submissions from /r/{}".format(subreddit))
             timesearch.main(["timesearch", "-r", subreddit])
-            logging.info("\nDownloading comments from /r/{}".format(subreddit))
+            print("\nDownloading comments from /r/{}".format(subreddit))
             timesearch.main(["commentaugment", "-r", subreddit])
-            logging.info("\nDownloaded from /r/{}".format(subreddit))
+            print("\nDownloaded from /r/{}".format(subreddit))
             return 0
         except Exception as e:
-            logging.info("Error: ".format(e.message))
+            print("Error: {}".format(str(e)))
             return 0
         
         if retries > 0:
             return self.perform_download(subreddit, retries=retries-1)
         
-        logging.error("Giving up")
+        print("Giving up")
         return 0
 
     def downloader(self, subreddits="all"):
@@ -78,6 +76,7 @@ class redditManager():
         
         for _ in pools.imap_unordered(self.perform_download, subreddits):
             pass
+            
 
     # def sql_to_pandas(self, coinname):
     #     con = sqlite3.connect(self.directory + "/subreddits/{}/{}.db".format(coinname, coinname))
